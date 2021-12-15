@@ -1,0 +1,18 @@
+{
+    "name": "osolutils/helpers",
+    "description": "This package gives to Mysql & PageNav Utility classes from http://www.outsource-online.net",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Osolutils\\Helpers\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sreekanth Dayanand",
+            "email": "osolgithub@outsource-online.net"
+        }
+    ],
+    "require": {}
+}
