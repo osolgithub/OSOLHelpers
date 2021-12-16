@@ -14,5 +14,7 @@
             "email": "osolgithub@outsource-online.net"
         }
     ],
-    "require": {}
+    "require": {
+		"osolutils/helpers":"^0.2"
+	}
 }
