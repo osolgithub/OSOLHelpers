@@ -19,8 +19,11 @@
 # Open  previewCaptcha.php in browser for customization
 /*
 //simplest way to show captcha
+session_start();
 $captcha = new \OSOLHelpers\OSOLmulticaptcha();
-$captcha->displayCaptcha();*/
+$captcha->displayCaptcha();
+$_SESSION['OSOLmulticaptcha_keystring'] = $captcha->keystring;
+*/
 namespace OSOLHelpers;
 class OSOLmulticaptcha{
 	
@@ -95,7 +98,7 @@ class OSOLmulticaptcha{
 		while(true){
 				$this->keystring='';
 				for($i=0;$i<$this->captchaLength;$i++){
-					$this->keystring.=$allowed_symbols{mt_rand(0,strlen($allowed_symbols)-1)};
+					$this->keystring.=$allowed_symbols[mt_rand(0,strlen($allowed_symbols)-1)];
 				}
 				if(!preg_match('/cp|cb|ck|c6|c9|rn|rm|mm|co|do|cl|db|qp|qb|dp|ww/', $this->keystring)) break;
 			}
@@ -295,13 +298,13 @@ class OSOLmulticaptcha{
 				$transparent = (imagecolorat($font, $i, 0) >> 24) == 127;
 
 				if(!$reading_symbol && !$transparent){
-					$font_metrics[$alphabet{$symbol}]=array('start'=>$i);
+					$font_metrics[$alphabet[$symbol]]=array('start'=>$i);
 					$reading_symbol=true;
 					continue;
 				}
 
 				if($reading_symbol && $transparent){
-					$font_metrics[$alphabet{$symbol}]['end']=$i;
+					$font_metrics[$alphabet[$symbol]]['end']=$i;
 					$reading_symbol=false;
 					$symbol++;
 					continue;
@@ -319,7 +322,7 @@ class OSOLmulticaptcha{
 			// draw text
 			$x=1;
 			for($i=0;$i<$length;$i++){
-				$m=$font_metrics[$this->keystring{$i}];
+				$m=$font_metrics[$this->keystring[$i]];
 
 				$y=mt_rand(-$fluctuation_amplitude, $fluctuation_amplitude)+($height-$fontfile_height)/2+2;
 
@@ -449,7 +452,8 @@ class OSOLmulticaptcha{
 		
 		if(function_exists("imagejpeg")){
 			header("Content-Type: image/jpeg");
-			imagejpeg($img2, null, $jpeg_quality);
+			@imagejpeg($img2, null, $jpeg_quality) or 
+				die('Cannot Initialize new GD image stream');
 		}else if(function_exists("imagegif")){
 			header("Content-Type: image/gif");
 			imagegif($img2);
