@@ -24,6 +24,7 @@ $captcha = new \OSOLHelpers\OSOLmulticaptcha();
 $captcha->displayCaptcha();
 $_SESSION['OSOLmulticaptcha_keystring'] = $captcha->keystring;
 */
+#namespace OSOLHelpers;
 namespace OSOLUtils\Helpers;
 class OSOLmulticaptcha{
 	
