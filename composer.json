@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "OSOLHelpers\\": "src/"
+            "OSOLUtils\\Helpers": "src/"
         }
     },
     "authors": [
@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-		"osolutils/helpers":"^0.5",		
+		"osolutils/helpers":"^0.6",		
 		"phpmailer/phpmailer":"*"
 	}
 }

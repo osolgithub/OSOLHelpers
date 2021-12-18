@@ -25,7 +25,8 @@ $templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns t
 * @version 1.0 <2009/09/18>
 * @copyright GNU General Public License (GPL)
 **/
-namespace OSOLHelpers;
+#namespace OSOLHelpers;
+namespace OSOLUtils\Helpers;
 class OSOLPageNav
 {
  var $lastReferedInstName="pn";// formerly varname

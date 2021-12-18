@@ -28,7 +28,8 @@ Sample
 * @version 1.0 <2021/12/15>
 * @copyright GNU General Public License (GPL)
 **/
-namespace OSOLHelpers;
+#namespace OSOLHelpers;
+namespace OSOLUtils\Helpers;
 class OSOLMySQL {
 	var $user;
 	var $pass;
