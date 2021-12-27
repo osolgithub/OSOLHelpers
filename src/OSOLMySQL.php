@@ -495,7 +495,10 @@ class OSOLMySQL {
 				echo $query."<br />\r\n";
 				break;
 			case 'file':
-				\upkar\php\helpers\ClassLogHelper::doLog($query, false); //   php/logs/allLogs.txt
+			    if(class_exists('\OsolMVC\Core\Helper\LogHelper'))
+				{					
+					\OsolMVC\Core\Helper\LogHelper::getInstance()->doLog($query, false);  //   php/logs/allLogs.txt
+				}
 				break;
 		}//switch($this->query_log_type)	
 	}//private function logQuery($query)
