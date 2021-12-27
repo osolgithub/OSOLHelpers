@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-		"osolutils/helpers":"^0.7",		
+		"osolutils/helpers":"*",		
 		"phpmailer/phpmailer":"*"
 	}
 }
