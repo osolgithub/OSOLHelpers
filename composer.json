@@ -16,6 +16,7 @@
     ],
     "require": {
 		"chamilo/pclzip":"*",		
-		"phpmailer/phpmailer":"*"
+		"phpmailer/phpmailer":"*",		
+        "google/apiclient": "*"
 	}
 }
