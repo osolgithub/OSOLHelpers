@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-		"osolutils/helpers":"*",		
+		"chamilo/pclzip":"*",		
 		"phpmailer/phpmailer":"*"
 	}
 }
