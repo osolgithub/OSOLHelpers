@@ -435,7 +435,7 @@ class OSOLMySQL {
         "mysql_time_zone" => "Asia/Kolkata"
         'site_time_zone' => 'Asia/Kolkata' // time zone based on wchic site is intended to work
         */
-        $siteConfig =  \upkar\php\ClassSiteConfig::getInstance();
+        $siteConfig =  \OsolMVC\Core\Config\ClassSiteConfig::getInstance();
         $dbSettings = $siteConfig->getDBSettings();
         $siteSettings = $siteConfig->getSiteSettings();
 
