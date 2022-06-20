@@ -80,7 +80,7 @@ class OSOLmulticaptcha{
 
 	
 	}
-	function displayCaptcha()
+	function displayCaptcha($returnImgObj = false)
 	{
 		
 		$imageFunction = $this->imageFunction;
@@ -89,8 +89,9 @@ class OSOLmulticaptcha{
 		{
 			$this->callCreateAlphaImageForDistorted();
 		}
-		$this->$imageFunction();
-		return $this->keystring;
+		$img2 = $this->$imageFunction($returnImgObj);
+		if($returnImgObj) return $img2;
+		else return $this->keystring;
 	}
 	
 	function createKeyString()
@@ -256,7 +257,7 @@ class OSOLmulticaptcha{
 	
 	# KCAPTCHA is a free software. You can freely use it for building own site or software.
 	# If you use this software as a part of own sofware, you must leave copyright notices intact or add KCAPTCHA copyright notices to own.
-	function create_imageAdv(){
+	function create_imageAdv($returnImgObj = false){
 		
 		
 		$alphabet = $this->symbolsToUse;
@@ -450,20 +451,23 @@ class OSOLmulticaptcha{
 		header('Cache-Control: no-store, no-cache, must-revalidate'); 
 		header('Cache-Control: post-check=0, pre-check=0', FALSE); 
 		header('Pragma: no-cache');
-		
-		if(function_exists("imagejpeg")){
-			header("Content-Type: image/jpeg");
-			@imagejpeg($img2, null, $jpeg_quality) or 
-				die('Cannot Initialize new GD image stream');
-		}else if(function_exists("imagegif")){
-			header("Content-Type: image/gif");
-			imagegif($img2);
+		if($returnImgObj) return $img2;
+		else
+		{
+			if(function_exists("imagejpeg")){
+				header("Content-Type: image/jpeg");
+				@imagejpeg($img2, null, $jpeg_quality) or 
+					die('Cannot Initialize new GD image stream');
+			}else if(function_exists("imagegif")){
+				header("Content-Type: image/gif");
+				imagegif($img2);
 
 
 
-		}else if(function_exists("imagepng")){
-			header("Content-Type: image/x-png");
-			imagepng($img2);
+			}else if(function_exists("imagepng")){
+				header("Content-Type: image/x-png");
+				imagepng($img2);
+			}
 		}
 		
 		
