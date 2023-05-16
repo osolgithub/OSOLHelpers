@@ -155,6 +155,8 @@ class OSOLMySQL {
         // Create connection
         $this->conn = new \mysqli($this->server, $this->user, $this->pass, $this->db);// or die("Failed to connect to database".$this->db);
 		
+		$this->conn->set_charset("utf8");//https://stackoverflow.com/questions/46305169/php-json-encode-malformed-utf-8-characters-possibly-incorrectly-encoded#comment112161850_46305914
+		
 		// Check connection
         if ($this->conn->connect_error) {
 			echo "{$this->server}, {$this->user}, {$this->pass}, {$this->db} <br />";
@@ -398,6 +400,10 @@ class OSOLMySQL {
 	function lastInsertId()
 	{
 		return $this->conn->insert_id;
+	}
+	function affectedRows()
+	{
+		return $this->conn->affected_rows;
 	}
 
 	function getTablePrefix()
