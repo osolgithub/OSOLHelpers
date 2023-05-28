@@ -62,3 +62,9 @@ Url: http://www.osolsolutions.in
 
 
 http://www.outsource-online.net/ is a site managed by http://www.osolsolutions.in/
+
+## Links
+
+[Repo](https://github.com/osolgithub/OSOLHelpers)
+[Releases](https://github.com/osolgithub/OSOLHelpers/releases)
+[Packagist](https://packagist.org/packages/osolutils/helpers)
