@@ -15,8 +15,9 @@
         }
     ],
     "require": {
-		"chamilo/pclzip":"*",		
-		"phpmailer/phpmailer":"*",		
-        "google/apiclient": "*"
+		"chamilo/pclzip": "*",		
+		"phpmailer/phpmailer": "*",		
+        "google/apiclient": "*",
+		"facebook/graph-sdk": "*"
 	}
 }
