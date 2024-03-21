@@ -25,6 +25,10 @@ $templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns t
 * @version 1.0 <2009/09/18>
 * @copyright GNU General Public License (GPL)
 **/
+/*
+regexp for functions
+^(?!(.*)\}\/)(.*)function([^->=,'",\r,\n]+)\s+([^\r\n]+)
+*/
 #namespace OSOLHelpers;
 namespace OSOLUtils\Helpers;
 class OSOLPageNav
@@ -34,6 +38,9 @@ class OSOLPageNav
  var $options=array("pagelinksperpage"=>20,"rows_per_page"=>5,"class"=>"");
  var $row_count=0;
  var $page_nav="";
+ var $pageLinksArray= [];
+ var $currentPage = "";
+ var $fpnlLinks="";
  var $display_rec_nums="";
  var $script_uri = "";
  var $database = null;
@@ -75,7 +82,7 @@ class OSOLPageNav
  }
  private function __construct($dbDetails)//,$options=array())
  {
-   $this->database = ($dbDetails == null)?\OSOLHelpers\OSOLMySQL::getInstance():\OSOLHelpers\OSOLMySQL::getInstance($dbDetails);
+   $this->database = ($dbDetails == null)?\OSOLUtils\Helpers\OSOLMySQL::getInstance():\OSOLHelpers\OSOLMySQL::getInstance($dbDetails);
    $this->activateInst($this->lastReferedInstName);
    
  }//private function __construct()
@@ -103,7 +110,7 @@ class OSOLPageNav
  function fetch_records(...$bindparams)
  {
    $sql = $bindparams[0];
-   $types = $bindparams[1]; //...$bindparams
+   if(isset($bindparams[1]))$types = $bindparams[1]; //...$bindparams
   //global $db;//$db is an instace of MYSQL class in the attacjhed db_class.php
   
   $dd_total_rows_var_name=$this->lastReferedInstName."_tot";
@@ -142,7 +149,7 @@ class OSOLPageNav
       
       
       $logMessage = "select_id_sql is \r\n " . $count_rsSQL;
-      \upkar\php\helpers\ClassLogHelper::doLog($logMessage);
+      \OsolMVC\Core\Helper\LogHelper::getInstance()->doLog($logMessage);
 
 
       $count_rs = call_user_func_array(array($this->database, 'selectPS'), $bindParams4Count);
@@ -158,6 +165,7 @@ class OSOLPageNav
   //$dd_total_rows_var_name=$this->lastReferedInstName."_tot";
   $dd_per_page_var_name=$this->lastReferedInstName."_per_page";
   $dd_page_num_var_name=$this->lastReferedInstName."_page_num";
+  $this->currentPage = isset($_GET[$dd_page_num_var_name])?$_GET[$dd_page_num_var_name]:0;
   $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
   if((!isset($_GET[$dd_per_page_var_name]))  || (isset($_GET[$dd_per_page_var_name]) && $_GET[$dd_per_page_var_name] !="all"))
   {
@@ -175,6 +183,7 @@ class OSOLPageNav
   }//(isset($_GET[$dd_per_page_var_name] && $_GET[$dd_per_page_var_name] !="all"))
   //echo $sql."<br />";
   //$this->rs=$this->database->select_sql($sql);  
+  //echo $sql." line # ".__LINE__."<br />";
   if(count($bindparams) > 1)
   {
     $bindparams[0] = $sql;
@@ -203,6 +212,10 @@ class OSOLPageNav
  {
   return ($_GET[$nav_var]*$_GET[$rows_per_page_var]);
  }
+
+ function fpnlLinks($tot_rows,$numrows_var,$rows_per_page_var,$nav_var /*$currentPageNo*/,$class="")//($numrows,$rows_per_page)
+ {
+ }//function fpnllinks($currentPageNo,$tot_rows,$numrows_var,$rows_per_page_var,$nav_var,$class="")
  function create_pagenav($tot_rows,$numrows_var,$rows_per_page_var,$nav_var,$class="")
  {
       //die(__FILE__ . " : " . __LINE__ ."  in create_pagenav") ;
@@ -218,10 +231,55 @@ class OSOLPageNav
         ) ; */
 
       $maxpagelinks=$pageNavOptions['pagelinksperpage'];
-
       $tot_pages=ceil($_GET[$numrows_var]/$_GET[$rows_per_page_var])-1;
-      $firstpage=$_GET[$nav_var]>$maxpagelinks?$_GET[$nav_var]-$maxpagelinks:0;
-      $lastpage=($tot_pages>=($_GET[$nav_var]+$maxpagelinks))?($_GET[$nav_var]+$maxpagelinks):$tot_pages;
+	  $currentPage = $_GET[$nav_var];//$maxpagelinks,$tot_pages
+	  /* echo "$nav_var is {$_GET[$nav_var]}<br />";
+	  echo "maxpagelinks is $maxpagelinks<br />";
+	  echo "tot_pages is $tot_pages<br />";
+	  echo " first range max is ". ($maxpagelinks - ceil($maxpagelinks/2))."<br />"; */
+	  
+      //$firstpage=$_GET[$nav_var]>$maxpagelinks?$_GET[$nav_var]-ceil($maxpagelinks/2):0;
+      $firstpage=($_GET[$nav_var]+ceil($maxpagelinks/2))>$maxpagelinks?$_GET[$nav_var]-ceil($maxpagelinks/2):0;
+      $lastpage=($tot_pages>=($_GET[$nav_var]+$maxpagelinks))?(($_GET[$nav_var]+ceil($maxpagelinks/2))):$tot_pages;
+	  
+	  if($tot_pages > $maxpagelinks)
+	  {
+		  $min = 0 ;
+		  $max = $maxpagelinks;
+		  $value = $currentPage;
+		  /*
+		  show 0 to $maxpagelinks if $currentPage is between 0 to $currentPage - ceil($maxpagelinks/2)
+		  show ($tot_pages - $maxpagelinks) to $tot_pages if $currentPage is between  $tot_pages - $maxpagelinks to $tot_pages
+		  otherwise show pages between  $currentPage - floor($maxpagelinks/2) and $currentPage + floor($maxpagelinks/2)
+		  */
+		  //($min <= $value) && ($value <= $max)
+		  
+		  switch(true)
+		  {
+			  case ((0 <= $currentPage) && ($currentPage <= ($maxpagelinks - ceil($maxpagelinks/2)))):
+				  //echo "FIRST<br />";
+				  $firstpage = 0;
+				  $lastpage = $maxpagelinks - 1;
+				break;
+			  //case ((($tot_pages - $maxpagelinks) <= $currentPage) && ($currentPage <= ($tot_pages))):
+			  case ($tot_pages <= ($currentPage + ceil($maxpagelinks/2))):
+				  //echo "SECOND<br />";
+				  $firstpage = $tot_pages - $maxpagelinks + 1;
+				  $lastpage = $tot_pages;
+				break;
+			  default:
+				  //echo "DEFAULT<br />";
+				  $firstpage = $currentPage - floor($maxpagelinks/2);
+				  $lastpage = $currentPage + floor($maxpagelinks/2);
+				break;
+		  }
+		  
+	  }
+	  else
+	  {
+		  $firstpage = 1;
+		  $lastpage = $tot_pages;
+	  }//if($tot_pages > $maxpagelinks)
       
      /* die(
       __FILE__ . " : " . __LINE__ ."  in create_pagenav ".$tot_pages."\r\n".
@@ -234,27 +292,51 @@ class OSOLPageNav
       //die(__FILE__ . " : " . __LINE__. " <br />".$skippedQString);
       
       $script_uri = $this->getScriptURI();//(isset($pageNavOptions['script_uri']) && $pageNavOptions['script_uri'] != "")?$pageNavOptions['script_uri']:$_SERVER['SCRIPT_URI'];
-      
+	  //$this->pageNavLink($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, "", $class);
       for($i=($firstpage);$i<=$lastpage;$i++)
       {
-            $page_nav_num .= " <a class=\"$class\"  href=\"{$script_uri}?".//{$_SERVER['SCRIPT_URI']}
+            /* $page_nav_num .= " <a class=\"$class\"  href=\"{$script_uri}?".//{$_SERVER['SCRIPT_URI']}
                             $skippedQString.
                             (($skippedQString!="")?"&":"").
                             $rows_per_page_var."=".$_GET[$rows_per_page_var].
                             "&".$numrows_var."=".$_GET[$numrows_var].
                             "&".$nav_var."=".$i.
-                            "\">".($i+1)."</a>";
+                            "\">".($i+1)."</a>"; */
+            $page_nav_num .= $this->pageNavLink($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, $i, $class);
       
       }//for($i=0;$i<=$numrows;$i++)
-      if($firstpage!=0) $page_nav_num="...$page_nav_num";
-      if($lastpage!=$tot_pages) $page_nav_num="$page_nav_num...";
+      /* $firstPageLink = $this->pageNavLink($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, 0, $class);
+      $finalPageLink = $this->pageNavLink($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, $tot_pages, $class);
+      if($firstpage!=0) $page_nav_num= $firstPageLink . "...$page_nav_num";
+      if($lastpage!=$tot_pages) $page_nav_num="$page_nav_num..." . $finalPageLink; */
       return $page_nav_num;
  
  }//function pagenav($tot_rows,$numrows_var,$rows_per_page_var,$nav_var,$class="")
+ function pageNavLinkURL($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, $i, $class="")
+ {
+	 
+	 $url =  $script_uri. "?".//{$_SERVER['SCRIPT_URI']}
+                            $skippedQString.
+                            (($skippedQString!="")?"&":"").
+                            $rows_per_page_var."=".$_GET[$rows_per_page_var].
+                            "&".$numrows_var."=".$_GET[$numrows_var].
+                            "&".$nav_var."=".$i;
+	return $url;
+ }
+ function pageNavLink($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, $i, $class="")
+ {
+	 $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
+	 $currentPageClass = "";
+	 $url = $this->pageNavLinkURL($script_uri, $skippedQString, $rows_per_page_var, $numrows_var, $nav_var, $i, $class);
+	 $this->pageLinksArray[] = $url;
+	 if(isset($pageNavOptions['currentPageClass']) && $i == $this->currentPage)$currentPageClass = $pageNavOptions['currentPageClass'];
+	 $linkText = $i==""?"":($i+1);
+	 return " <a class=\"$class {$currentPageClass}\"  href=\"".$url."\">".$linkText."</a>";
+ }
  private function getScriptURI()
  {
   $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
-  $script_uri = (isset($pageNavOptions['script_uri']) && $pageNavOptions['script_uri'] != "")?$pageNavOptions['script_uri']:$_SERVER['SCRIPT_URI'];
+  $script_uri = (isset($pageNavOptions['script_uri']) /* && $pageNavOptions['script_uri'] != "" */)?$pageNavOptions['script_uri']:$_SERVER['SCRIPT_URI'];
   return $script_uri;
  }
  private function sp_skip_param($params2Skip)
@@ -293,10 +375,6 @@ class OSOLPageNav
 		$limit="limit $startRow ,$maxRows";	
 		return $limit;
  }//function get_row_limit($rows_per_page_var,$nav_var)
-
- function fpnllinks($numrows,$rows_per_page)
- {
- }//function fpnllinks($numrows,$rows_per_page)
  function getDropDownHTML()
  {
     $script_uri = $this->getScriptURI();
