@@ -11,7 +11,8 @@ $lps_page_nav[$lps_page_nav_index]->options[rows_per_page]=10;//fetch 10 records
 
 $sql = "SELECT * FROM table";
 
-$templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns the records as an array
+//$templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns the records as an array
+$templates = $lps_page_nav[$lps_page_nav_index]->fetch_records([$sql,$paramTypes,$paramenterValues]);//returns the records as an array
 
  echo $lps_page_nav[$lps_page_nav_index]->page_nav."<br />"//displays like 1,2,3,4
  echo $lps_page_nav[$lps_page_nav_index]->display_rec_nums."<br />";//displays like 1 to 10 of 25
