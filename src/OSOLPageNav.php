@@ -16,6 +16,7 @@ Old style
 //$templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns the records as an array
 
 New style with prepared statements
+if only sql is hethere simple use [$sql]
 
 $templates = $lps_page_nav[$lps_page_nav_index]->fetch_records([$sql,$paramTypes,$paramenterValues]);//returns the records as an array
 
