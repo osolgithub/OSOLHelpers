@@ -11,6 +11,7 @@ $lps_page_nav[$lps_page_nav_index]->options[rows_per_page]=10;//fetch 10 records
 
 $sql = "SELECT * FROM table";
 
+
 /* 
 Old style
 //$templates = $lps_page_nav[$lps_page_nav_index]->fetch_records($sql);//returns the records as an array
@@ -42,11 +43,14 @@ class OSOLPageNav
 {
  var $lastReferedInstName="pn";// formerly varname
  var $rs=array();
- var $options=array("pagelinksperpage"=>20,"rows_per_page"=>5,"class"=>"");
+ var $options=array("pagelinksperpage"=>20,"rows_per_page"=>5,"class"=>"","idFieldName" => "id");
  var $row_count=0;
  var $page_nav="";
  var $pageLinksArray= [];
  var $currentPage = "";
+ var $rowsPerPage = 0;
+ var $linksPerPage = 0;
+ var $totalRecords = 0;
  var $fpnlLinks="";
  var $display_rec_nums="";
  var $script_uri = "";
@@ -174,6 +178,10 @@ class OSOLPageNav
   $dd_page_num_var_name=$this->lastReferedInstName."_page_num";
   $this->currentPage = isset($_GET[$dd_page_num_var_name])?$_GET[$dd_page_num_var_name]:0;
   $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
+  $this->linksPerPage = $pageNavOptions['pagelinksperpage'];
+  $this->rowsPerPage = $pageNavOptions['rows_per_page'];
+  $this->totalRecords = $this->row_count;
+  $this->idFieldName = $pageNavOptions['idFieldName'];
   if((!isset($_GET[$dd_per_page_var_name]))  || (isset($_GET[$dd_per_page_var_name]) && $_GET[$dd_per_page_var_name] !="all"))
   {
     $this->page_nav=$this->create_pagenav($this->row_count,$dd_total_rows_var_name,$dd_per_page_var_name,$dd_page_num_var_name,$pageNavOptions["class"]);
