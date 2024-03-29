@@ -229,9 +229,10 @@ class OSOLMySQL {
 		if($stmt->execute())// or die(sprintf("Error: %s.\n", $stmt->errno ." : ". $stmt->error)."<br /> ".$sql."<br /> types :{$types }<br /> bindArgs <pre>".print_r($bindArgs,true)."</pre>");
 		{
 			//if($site_options["debug_mode"]) echo $sql."<br />";
-			$stmt->close();
 			
-			$resultGot = array("status"=> "success","insert_id" => $this->lastInsertId());
+			//$resultGot = array("status"=> "success","insert_id" => $stmt->lastInsertId(),"affectedRows" => $stmt->affectedRows());
+			$resultGot = array("status"=> "success","insert_id" => $stmt->insert_id,"affectedRows" => $stmt->affected_rows);
+			$stmt->close();
 			
 		}
 		else //if($stmt->execute())
