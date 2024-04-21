@@ -292,7 +292,7 @@ class OSOLPageNav
 	  }
 	  else
 	  {
-		  $firstpage = 1;
+		  $firstpage = 0;
 		  $lastpage = $tot_pages;
 	  }//if($tot_pages > $maxpagelinks)
       
