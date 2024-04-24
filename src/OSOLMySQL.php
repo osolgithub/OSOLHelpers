@@ -238,12 +238,17 @@ class OSOLMySQL {
 		else //if($stmt->execute())
 		{
 			$resultGot = array("status"=> "failed","error_no" => $stmt->errno , "error_desc" => $stmt->error);
+			$error2Show =  $this->lastSQLRun."<hr />"."<pre>".print_r($resultGot,true)."</pre>";
 			if($this->showError)
 			{
 				//echo "sql is ".$sql."<br />";
-				echo  $this->lastSQLRun."<hr />"."<pre>".print_r($resultGot,true)."</pre>";
-				$this->logQuery( $this->lastSQLRun."<hr />"."<pre>".print_r($resultGot,true)."</pre>");
-			}//if($this->showError)
+				echo  $error2Show;
+				$this->logQuery($error2Show);
+			}
+			/* else
+			{
+				throw new \Exception($error2Show );
+			}//if($this->showError) */
 		}//if($stmt->execute())
 		return $resultGot;
 	}//function executePS($sql,$types="",...$bindArgs) 
