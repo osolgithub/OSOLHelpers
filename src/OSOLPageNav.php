@@ -225,7 +225,7 @@ class OSOLPageNav
  }//function get_row_limit($dd_per_page_var_name,$dd_page_num_var_name) */
  function first_recno_for_pageno($numrows_var,$rows_per_page_var,$nav_var)
  {
-  return ($_GET[$nav_var]*$_GET[$rows_per_page_var]);
+  return ($_GET[$nav_var]*$this->rowsPerPage);
  }
 
  function fpnlLinks($tot_rows,$numrows_var,$rows_per_page_var,$nav_var /*$currentPageNo*/,$class="")//($numrows,$rows_per_page)
@@ -236,17 +236,17 @@ class OSOLPageNav
       //die(__FILE__ . " : " . __LINE__ ."  in create_pagenav") ;
       $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
          //set defaults if not declared aleady
-		  if(!( isset($_GET[$rows_per_page_var]) && $_GET[$rows_per_page_var]>0)) $_GET[$rows_per_page_var]=$pageNavOptions['rows_per_page'];
+		  if(!( isset($this->rowsPerPage) && $this->rowsPerPage>0)) $this->rowsPerPage=$pageNavOptions['rows_per_page'];
 		  if(!isset($_GET[$nav_var])) $_GET[$nav_var]=0;
 		  if(!isset($_GET[$numrows_var])) $_GET[$numrows_var]=$tot_rows;
 		 //set defaults if not declared aleady  ends here
      /* echo(
-            __FILE__ . " : " . __LINE__ ."  in create_pagenav ".$_GET[$rows_per_page_var]."\r\n".
+            __FILE__ . " : " . __LINE__ ."  in create_pagenav ".$this->rowsPerPage."\r\n".
             __FILE__ . " : " . __LINE__ ."  in create_pagenav ".$_GET[$nav_var]."\r\n"
         ) ; */
 
       $maxpagelinks=$pageNavOptions['pagelinksperpage'];
-      $tot_pages=ceil($_GET[$numrows_var]/$_GET[$rows_per_page_var])-1;
+      $tot_pages=ceil($_GET[$numrows_var]/$this->rowsPerPage)-1;
 	  $currentPage = $_GET[$nav_var];//$maxpagelinks,$tot_pages
 	  /* echo "$nav_var is {$_GET[$nav_var]}<br />";
 	  echo "maxpagelinks is $maxpagelinks<br />";
@@ -313,7 +313,7 @@ class OSOLPageNav
             /* $page_nav_num .= " <a class=\"$class\"  href=\"{$script_uri}?".//{$_SERVER['SCRIPT_URI']}
                             $skippedQString.
                             (($skippedQString!="")?"&":"").
-                            $rows_per_page_var."=".$_GET[$rows_per_page_var].
+                            $rows_per_page_var."=".$this->rowsPerPage.
                             "&".$numrows_var."=".$_GET[$numrows_var].
                             "&".$nav_var."=".$i.
                             "\">".($i+1)."</a>"; */
@@ -333,7 +333,7 @@ class OSOLPageNav
 	 $url =  $script_uri. "?".//{$_SERVER['SCRIPT_URI']}
                             $skippedQString.
                             (($skippedQString!="")?"&":"").
-                            $rows_per_page_var."=".$_GET[$rows_per_page_var].
+                            $rows_per_page_var."=".$this->rowsPerPage.
                             "&".$numrows_var."=".$_GET[$numrows_var].
                             "&".$nav_var."=".$i;
 	return $url;
@@ -373,7 +373,7 @@ class OSOLPageNav
  function get_display_row_limit($rows_per_page_var,$nav_var)
  {
         $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
-        $maxRows = (!($_GET[$rows_per_page_var]>0))?$pageNavOptions[rows_per_page]:$_GET[$rows_per_page_var];
+        $maxRows = (!($this->rowsPerPage>0))?$pageNavOptions[rows_per_page]:$this->rowsPerPage;
         $pageNum = (!isset($_GET[$nav_var]))?0:$_GET[$nav_var];
         $startRow = ($pageNum * $maxRows)+1;
 		$maxRows=$startRow + $maxRows-1;
@@ -384,7 +384,7 @@ class OSOLPageNav
  function get_row_limit($rows_per_page_var,$nav_var)
  {
         $pageNavOptions =  $this->getOptions($this->lastReferedInstName);
-        $maxRows = (!($_GET[$rows_per_page_var]>0))?$pageNavOptions[rows_per_page]:$_GET[$rows_per_page_var];
+        $maxRows = (!($this->rowsPerPage>0))?$pageNavOptions[rows_per_page]:$this->rowsPerPage;
         $pageNum = (!isset($_GET[$nav_var]))?0:$_GET[$nav_var];
         $startRow = $pageNum * $maxRows;
 		$limit="limit $startRow ,$maxRows";	
@@ -403,7 +403,7 @@ class OSOLPageNav
               (($skippedQString!="")?"&":"").
               $numrows_var."=".$_GET[$numrows_var].
                         "&".$nav_var."=0".
-                        "&".$rows_per_page_var."=";//.$_GET[$rows_per_page_var].;
+                        "&".$rows_per_page_var."=";//.$this->rowsPerPage.;
     $newURI = $script_uri."?".$qString;
     $dropdownFunctionName = $this->lastReferedInstName."_onRangeChanged()";
     $selectRangeId = $this->lastReferedInstName . "_dropdown";
