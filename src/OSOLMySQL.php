@@ -40,6 +40,7 @@ class OSOLMySQL {
 	var $table_prefix;
 	var $log_queries;
 	var $query_log_type;
+	var $dbDetails;
 
 	var $lastSQLRun = "";
 	
