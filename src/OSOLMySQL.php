@@ -201,6 +201,25 @@ class OSOLMySQL {
 	    return "";
 
 	}//function debug_trace()
+	function executePSWithTransaction($sql,$types="",...$bindArgsRecieved)
+	{
+		
+		try {
+			// 1. Begin the transaction
+			$this->conn->begin_transaction();
+
+			// 2. Execute queries
+			/* $mysqli->query("INSERT INTO users (name) VALUES ('Alice')");
+			$mysqli->query("UPDATE accounts SET balance = balance - 100 WHERE id = 1"); */
+			$this->executePS($sql,$types,...$bindArgsRecieved);
+			// 3. Commit if successful
+			$this->conn->commit();
+		} catch (mysqli_sql_exception $exception) {
+			// 4. Rollback if an error occurs
+			$this->conn->rollback();
+			throw $exception;
+		}
+	}//function executePSWithTransaction($sql,$types="",...$bindArgsRecieved) 
 	function executePS($sql,$types="",...$bindArgsRecieved) 
 	//--------------------------------------------------------
 	{ 	
