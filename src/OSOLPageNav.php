@@ -51,6 +51,7 @@ class OSOLPageNav
  var $rowsPerPage = 0;
  var $linksPerPage = 0;
  var $totalRecords = 0;
+ var $idFieldName = "";
  var $fpnlLinks="";
  var $display_rec_nums="";
  var $script_uri = "";
