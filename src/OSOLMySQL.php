@@ -108,7 +108,8 @@ class OSOLMySQL {
 	private function __construct0()//MySQL(
 	//--------------------------------------------------------
 	{
-		$siteConfig =  \OsolMVC\Core\Config\ClassSiteConfig::getInstance();
+		//$siteConfig =  \OsolMVC\Core\Config\ClassSiteConfig::getInstance();
+		$siteConfig =  \OsolMVC\Core\Helper\SiteConfigHelper::getInstance();
         $dbDetails = $siteConfig->getDBSettings();
 		//die("dbDetails is <pre>".print_r($dbDetails,true)."</pre>");
         
@@ -201,6 +202,34 @@ class OSOLMySQL {
 	    return "";
 
 	}//function debug_trace()
+	/**
+	example usage
+	try {
+			// 1. Begin the transaction
+			$database->beginTrasaction();
+
+			// 2. Execute queries
+			$database->executePS($sql,$types,...$bindArgsRecieved);
+			// 3. Commit if successful
+			$database->commit();
+		} catch (mysqli_sql_exception $exception) {
+			// 4. Rollback if an error occurs
+			$database->conn->rollBack();
+			throw $exception;
+		}
+	*/
+	function beginTrasaction()
+	{
+		$this->conn->begin_transaction();
+	}//function beginTrasaction()
+	function commit()
+	{
+		$this->conn->commit();
+	}//function commit()
+	function rollBack()
+	{
+		$this->conn->rollback();
+	}//function rollBack()
 	function executePSWithTransaction($sql,$types="",...$bindArgsRecieved)
 	{
 		
