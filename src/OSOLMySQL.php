@@ -206,7 +206,7 @@ class OSOLMySQL {
 	example usage
 	try {
 			// 1. Begin the transaction
-			$database->beginTrasaction();
+			$database->beginTransaction();
 
 			// 2. Execute queries
 			$database->executePS($sql,$types,...$bindArgsRecieved);
@@ -218,10 +218,10 @@ class OSOLMySQL {
 			throw $exception;
 		}
 	*/
-	function beginTrasaction()
+	function beginTransaction()
 	{
 		$this->conn->begin_transaction();
-	}//function beginTrasaction()
+	}//function beginTransaction()
 	function commit()
 	{
 		$this->conn->commit();
