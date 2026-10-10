@@ -70,6 +70,7 @@ For captcha without Cookie
 namespace OSOLUtils\Helpers;
 class OSOLmulticaptcha{
 	
+	var $keystring = "";
 	var $imageFunction = "Adv";
 	var $font_size = 24;
 	var $font_ttf  = 'BookmanOldStyle.TTF';//'AdLibBT.TTF';
@@ -410,7 +411,7 @@ class OSOLmulticaptcha{
 									$py=$sy+$y;
 									if($py>$height) break;
 									for($px=min($left,$width-1);$px>$left-12 && $px>=0;$px-=1){
-						        		$color=imagecolorat($img, $px, $py) & 0xff;
+						        		$color=imagecolorat($img, intval($px), intval($py)) & 0xff;
 										if($color+$opacity<190){
 											if($shift>$left-$px){
 												$shift=$left-$px;
@@ -430,7 +431,12 @@ class OSOLmulticaptcha{
 				}else{
 					$shift=1;
 				}
-				imagecopy($img, $font, $x-$shift, $y, $m['start'], 1, $m['end']-$m['start'], $fontfile_height);
+				/* $params =  ($x-$shift)." ". $y." ". $m['start']." ". 1 . " ". $m['end']."  - ".$m['start']." ". $fontfile_height;
+				
+				echo $params; */
+				
+	
+				imagecopy($img, $font, $x-$shift, intval($y), $m['start'], 1, $m['end']-$m['start'], $fontfile_height);
 				$x+=$m['end']-$m['start']-$shift;
 			}
 		}while($x>=$width-10); // while not fit in canvas
@@ -479,10 +485,10 @@ class OSOLmulticaptcha{
 				if($sx<0 || $sy<0 || $sx>=$width-1 || $sy>=$height-1){
 					continue;
 				}else{
-					$color=imagecolorat($img, $sx, $sy) & 0xFF;
-					$color_x=imagecolorat($img, $sx+1, $sy) & 0xFF;
-					$color_y=imagecolorat($img, $sx, $sy+1) & 0xFF;
-					$color_xy=imagecolorat($img, $sx+1, $sy+1) & 0xFF;
+					$color=imagecolorat($img, intval($sx), intval($sy)) & 0xFF;
+					$color_x=imagecolorat($img, intval($sx+1), intval($sy)) & 0xFF;
+					$color_y=imagecolorat($img, intval($sx), intval($sy+1)) & 0xFF;
+					$color_xy=imagecolorat($img, intval($sx+1), intval($sy+1)) & 0xFF;
 				}
 
 				if($color==255 && $color_x==255 && $color_y==255 && $color_xy==255){
@@ -512,7 +518,7 @@ class OSOLmulticaptcha{
 					$newblue=$newcolor0*$foreground_color[2]+$newcolor*$background_color[2];
 				}
 
-				imagesetpixel($img2, $x, $y, imagecolorallocate($img2, $newred, $newgreen, $newblue));
+				imagesetpixel($img2, $x, $y, imagecolorallocate($img2, intval($newred), intval($newgreen), intval($newblue)));
 			}
 		}
 		//die($this->keystring);
