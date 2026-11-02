@@ -471,7 +471,39 @@ class OSOLMySQL {
 		$bindArgs = $this->getRestructuredBindSQLIncludingArrays($bindArgsRecieved);
 		return $this->getReplacedSQL($stmt,$bindArgs)."\r\n";//<br />
 	}//public function getReplacedSQLAdv($stmt,$types = "", ...$bindparams)
+	/*
+	new getReplacedSQL replacing getReplacedSQLOld
+	since applying `$this->conn->real_escape_string` and `stripslashes` on NULL objects are deprecated
+	*/
 	public function getReplacedSQL($stmt,$bindparams)
+	{
+		//echo"<pre>".print_r(array($stmt,$bindparams), true)."</pre>";
+
+		// 1. Walk through parameters to clean data and determine the SQL replacement format for each
+		$formats = [];
+		$escapedParams = array_map(function($param) use (&$formats) {
+			if ($param === null) {
+				$formats[] = 'NULL'; // No quotes for actual SQL NULL
+				return '';           // Dummy value (vsprintf still consumes it, but 'NULL' ignores it)
+			}
+			
+			$formats[] = "'%s'";     // Wrapped in quotes for valid strings
+			return $this->conn->real_escape_string(stripslashes($param));
+		}, $bindparams);
+
+		// 2. Rebuild the format string dynamically by replacing '?' one by one
+		$formatStmt = preg_replace_callback('/\?/', function() use (&$formats) {
+			return array_shift($formats);
+		}, $stmt);
+
+		// 3. Compile and clean the final SQL string
+		$replacedSQL = preg_replace("@\\\\@u", "\\", trim(vsprintf($formatStmt, $escapedParams)));
+
+		
+	    if(substr($replacedSQL,-1) != ";")$replacedSQL .= ";";
+		return $replacedSQL;
+	}//public getReplacedSQL($stmt,$bindparams)
+	public function getReplacedSQLOld($stmt,$bindparams)
 	{
 		//echo"<pre>".print_r(array($stmt,$bindparams), true)."</pre>";
 
@@ -484,7 +516,7 @@ class OSOLMySQL {
 		
 	    if(substr($replacedSQL,-1) != ";")$replacedSQL .= ";";
 		return $replacedSQL;
-	}//public getReplacedSQL($stmt,$bindparams)
+	}//public getReplacedSQLOld($stmt,$bindparams)
 	
     public function mySQLAndPHPTimeDiff()
     {
